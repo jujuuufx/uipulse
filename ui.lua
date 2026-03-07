@@ -107,15 +107,22 @@ end
 function Pulse:Resizify(Parent)
     local UIS = game:GetService("UserInputService")
     local Resizing = Pulse:Create("TextButton", {
-        AnchorPoint = vec2(1, 1), Position = dim2(1, 0, 1, 0), Size = dim2(0, 20, 0, 20),
+        AnchorPoint = vec2(1, 1), Position = dim2(1, 0, 1, 0), Size = dim2(0, 24, 0, 24), -- slightly bigger area
         BorderSizePixel = 0, BackgroundTransparency = 1, Text = "", Parent = Parent, ZIndex = 999,
     })
     
     local grip = Pulse:Create("ImageLabel", {
-        Parent = Resizing, AnchorPoint = vec2(1, 1), Position = dim2(1, -4, 1, -4), Size = dim2(0, 10, 0, 10),
-        BackgroundTransparency = 1, Image = "rbxassetid://126894492960889", ImageColor3 = themes.preset.accent, ImageTransparency = 0.5
+        Parent = Resizing,
+        AnchorPoint = vec2(1, 1),
+        Position = dim2(1, -2, 1, -2),
+        Size = dim2(0, 14, 0, 14), -- bigger icon
+        BackgroundTransparency = 1,
+        Image = "rbxthumb://type=Asset&id=126894492960889&w=150&h=150",
+        ImageColor3 = themes.preset.accent,
+        ImageTransparency = 0.5
     })
-    Pulse:Themify(grip, "accent", "ImageColor3") -- Updated to accent color
+    
+    Pulse:Themify(grip, "accent", "ImageColor3")
 
     local IsResizing, StartInputPos, StartSize = false, nil, nil
     local MIN_SIZE = vec2(600, 450)
@@ -123,17 +130,26 @@ function Pulse:Resizify(Parent)
 
     Resizing.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            IsResizing = true; StartInputPos = input.Position; StartSize = Parent.AbsoluteSize
+            IsResizing = true
+            StartInputPos = input.Position
+            StartSize = Parent.AbsoluteSize
         end
     end)
+
     Resizing.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then IsResizing = false end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            IsResizing = false
+        end
     end)
+
     UIS.InputChanged:Connect(function(input)
         if not IsResizing then return end
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             local delta = input.Position - StartInputPos
-            Parent.Size = UDim2.fromOffset(math.clamp(StartSize.X + delta.X, MIN_SIZE.X, MAX_SIZE.X), math.clamp(StartSize.Y + delta.Y, MIN_SIZE.Y, MAX_SIZE.Y))
+            Parent.Size = UDim2.fromOffset(
+                math.clamp(StartSize.X + delta.X, MIN_SIZE.X, MAX_SIZE.X),
+                math.clamp(StartSize.Y + delta.Y, MIN_SIZE.Y, MAX_SIZE.Y)
+            )
         end
     end)
 end
