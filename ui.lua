@@ -113,7 +113,7 @@ function Pulse:Resizify(Parent)
     
     local grip = Pulse:Create("ImageLabel", {
         Parent = Resizing, AnchorPoint = vec2(1, 1), Position = dim2(1, -4, 1, -4), Size = dim2(0, 10, 0, 10),
-        BackgroundTransparency = 1, Image = "rbxassetid://6153965706", ImageColor3 = themes.preset.accent, ImageTransparency = 0.5
+        BackgroundTransparency = 1, Image = "rbxassetid://126894492960889", ImageColor3 = themes.preset.accent, ImageTransparency = 0.5
     })
     Pulse:Themify(grip, "accent", "ImageColor3") -- Updated to accent color
 
