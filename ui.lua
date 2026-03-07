@@ -113,8 +113,9 @@ function Pulse:Resizify(Parent)
     
     local grip = Pulse:Create("ImageLabel", {
         Parent = Resizing, AnchorPoint = vec2(1, 1), Position = dim2(1, -4, 1, -4), Size = dim2(0, 10, 0, 10),
-        BackgroundTransparency = 1, Image = "rbxassetid://11293977610", ImageColor3 = themes.preset.subtext, ImageTransparency = 0.5
+        BackgroundTransparency = 1, Image = "rbxassetid://6153965706", ImageColor3 = themes.preset.accent, ImageTransparency = 0.5
     })
+    Pulse:Themify(grip, "accent", "ImageColor3") -- Updated to accent color
 
     local IsResizing, StartInputPos, StartSize = false, nil, nil
     local MIN_SIZE = vec2(600, 450)
@@ -161,7 +162,6 @@ function Pulse:Window(properties)
         Size = Cfg.Size, BackgroundTransparency = 1, BorderSizePixel = 0
     })
     
-    -- Exact User Provided Glow snippet
     Items.Glow = Pulse:Create("ImageLabel", {
         ImageColor3 = themes.preset.glow,
         ScaleType = Enum.ScaleType.Slice,
@@ -342,12 +342,26 @@ function Pulse:Tab(properties)
     if not Cfg.Hidden then
         Items.Button = Pulse:Create("TextButton", { 
             Parent = self.Items.TabHolder, Size = dim2(0, 30, 0, 30), 
-            BackgroundColor3 = themes.preset.accent, -- Changed to accent to match theme system
-            BackgroundTransparency = 1, -- Start transparent (no background box)
+            BackgroundColor3 = themes.preset.accent,
+            BackgroundTransparency = 1, 
             Text = "", AutoButtonColor = false, ZIndex = 5 
         })
         Pulse:Themify(Items.Button, "accent", "BackgroundColor3")
         Pulse:Create("UICorner", { Parent = Items.Button, CornerRadius = dim(0, 6) })
+        
+        -- Subtle Gradient added to Tab Buttons
+        Pulse:Create("UIGradient", {
+            Parent = Items.Button,
+            Rotation = 45,
+            Transparency = NumberSequence.new({
+                NumberSequenceKeypoint.new(0, 0.4), -- Subtle, not too bright
+                NumberSequenceKeypoint.new(1, 0.8)
+            }),
+            Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, rgb(255, 255, 255)),
+                ColorSequenceKeypoint.new(1, rgb(180, 180, 180))
+            })
+        })
         
         Items.IconImg = Pulse:Create("ImageLabel", { 
             Parent = Items.Button, AnchorPoint = vec2(0.5, 0.5), Position = dim2(0.5, 0, 0.5, 0),
@@ -424,8 +438,8 @@ function Pulse:Section(properties)
     local Cfg = { 
         Name = properties.Name or properties.name or "Section", 
         Side = properties.Side or properties.side or "Left", 
-        Icon = properties.Icon or properties.icon or "rbxassetid://11293977610", -- Default shield
-        RightIcon = properties.RightIcon or properties.righticon or "rbxassetid://11293977610", -- Default chevron/gear
+        Icon = properties.Icon or properties.icon or "rbxassetid://11293977610", 
+        RightIcon = properties.RightIcon or properties.righticon or "rbxassetid://11293977610",
         Items = {} 
     }
     Cfg.Side = (Cfg.Side:lower() == "right") and "Right" or "Left"
@@ -437,6 +451,15 @@ function Pulse:Section(properties)
     })
     Pulse:Themify(Items.Section, "section", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.Section, CornerRadius = dim(0, 6) })
+    
+    -- Gradient for Section background
+    Pulse:Create("UIGradient", {
+        Parent = Items.Section, Rotation = 90,
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, rgb(255, 255, 255)),
+            ColorSequenceKeypoint.new(1, rgb(225, 225, 225))
+        })
+    })
 
     -- THE RED LINE ACCENT ON LEFT SIDE
     Items.AccentLine = Pulse:Create("Frame", {
@@ -444,6 +467,16 @@ function Pulse:Section(properties)
         BackgroundColor3 = themes.preset.accent, BorderSizePixel = 0, ZIndex = 2
     })
     Pulse:Themify(Items.AccentLine, "accent", "BackgroundColor3")
+
+    -- Gradient fade for AccentLine
+    Pulse:Create("UIGradient", {
+        Parent = Items.AccentLine, Rotation = 90,
+        Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0),
+            NumberSequenceKeypoint.new(0.6, 0),
+            NumberSequenceKeypoint.new(1, 1) -- Fades out completely at bottom
+        })
+    })
 
     Items.Header = Pulse:Create("Frame", { Parent = Items.Section, Size = dim2(1, 0, 0, 36), BackgroundTransparency = 1 })
     
@@ -462,7 +495,7 @@ function Pulse:Section(properties)
     Items.Chevron = Pulse:Create("ImageLabel", {
         Parent = Items.Header, Position = dim2(1, -14, 0.5, 0), AnchorPoint = vec2(1, 0.5), Size = dim2(0, 12, 0, 12),
         BackgroundTransparency = 1, Image = Cfg.RightIcon, ImageColor3 = themes.preset.subtext, 
-        Rotation = (Cfg.RightIcon == "rbxassetid://11293977610") and 180 or 0 -- Rotate if it's the chevron, keep upright if custom gear
+        Rotation = (Cfg.RightIcon == "rbxassetid://11293977610") and 180 or 0
     })
     Pulse:Themify(Items.Chevron, "subtext", "ImageColor3")
 
@@ -496,11 +529,10 @@ function Pulse:Toggle(properties)
     Pulse:Themify(Items.Checkbox, "element", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.Checkbox, CornerRadius = dim(0, 3) })
 
-    -- Inner frame added directly linked to accent color to fix the color issue
     Items.CheckFill = Pulse:Create("Frame", {
         Parent = Items.Checkbox, Size = dim2(1, 0, 1, 0),
         BackgroundColor3 = themes.preset.accent, BorderSizePixel = 0,
-        BackgroundTransparency = 1 -- hidden by default
+        BackgroundTransparency = 1
     })
     Pulse:Themify(Items.CheckFill, "accent", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.CheckFill, CornerRadius = dim(0, 3) })
@@ -514,7 +546,6 @@ function Pulse:Toggle(properties)
     local State = false
     function Cfg.set(bool)
         State = bool
-        -- Tween the CheckFill transparency to properly respect the current selected accent color
         Pulse:Tween(Items.CheckFill, {BackgroundTransparency = State and 0 or 1}, TweenInfo.new(0.2))
         Pulse:Tween(Items.Title, {TextColor3 = State and themes.preset.text or themes.preset.subtext}, TweenInfo.new(0.2))
         if Cfg.Flag then Flags[Cfg.Flag] = State end
@@ -652,7 +683,7 @@ function Pulse:Textbox(properties)
     return setmetatable(Cfg, Pulse)
 end
 
--- animated dropdown lolz 
+-- animated dropdown lolz with search
 function Pulse:Dropdown(properties)
     local Cfg = { 
         Name = properties.Name or properties.name or "Dropdown", 
@@ -687,37 +718,97 @@ function Pulse:Dropdown(properties)
     Pulse:Themify(Items.DropFrame, "element", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.DropFrame, CornerRadius = dim(0, 4) })
 
+    -- Search implementation inside dropdown
+    Items.SearchBg = Pulse:Create("Frame", { Parent = Items.DropFrame, Size = dim2(1, -12, 0, 24), Position = dim2(0, 6, 0, 6), BackgroundColor3 = themes.preset.background, BorderSizePixel = 0, BackgroundTransparency = 1, ZIndex = 201 })
+    Pulse:Themify(Items.SearchBg, "background", "BackgroundColor3")
+    Pulse:Create("UICorner", { Parent = Items.SearchBg, CornerRadius = dim(0, 4) })
+
+    Items.SearchInput = Pulse:Create("TextBox", {
+        Parent = Items.SearchBg, Size = dim2(1, -16, 1, 0), Position = dim2(0, 8, 0, -4), BackgroundTransparency = 1, 
+        Text = "", PlaceholderText = "Search...", TextColor3 = themes.preset.text, PlaceholderColor3 = themes.preset.subtext, 
+        TextSize = 12, FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium), TextXAlignment = Enum.TextXAlignment.Left, ClearTextOnFocus = false, TextTransparency = 1, ZIndex = 202
+    })
+    Pulse:Themify(Items.SearchInput, "text", "TextColor3")
+
     Items.Scroll = Pulse:Create("ScrollingFrame", { 
-        Parent = Items.DropFrame, Size = dim2(1, 0, 1, -8), Position = dim2(0, 0, 0, 4), 
+        Parent = Items.DropFrame, Size = dim2(1, 0, 1, -36), Position = dim2(0, 0, 0, 32), 
         BackgroundTransparency = 1, ScrollBarThickness = 0, BorderSizePixel = 0, ZIndex = 201 
     })
     Pulse:Create("UIListLayout", { Parent = Items.Scroll, SortOrder = Enum.SortOrder.LayoutOrder })
 
     local Open = false
     local isTweening = false
+    local OptionBtns = {}
 
     function Cfg.UpdatePosition()
         local absPos = Items.Main.AbsolutePosition
         local absSize = Items.Main.AbsoluteSize
         Items.DropFrame.Position = dim2(0, absPos.X, 0, absPos.Y + absSize.Y + 4)
-        Items.Scroll.CanvasSize = dim2(0, 0, 0, #Cfg.Options * 24)
+        local visibleCount = 0
+        for _, data in ipairs(OptionBtns) do
+            if data.btn.Size.Y.Offset > 0 then visibleCount += 1 end
+        end
+        Items.Scroll.CanvasSize = dim2(0, 0, 0, visibleCount * 24)
     end
+
+    local function FilterOptions()
+        local text = Items.SearchInput.Text:lower()
+        local visibleCount = 0
+        
+        for _, data in ipairs(OptionBtns) do
+            local btn = data.btn
+            local optText = data.text:lower()
+            
+            if text == "" or optText:find(text) then
+                visibleCount += 1
+                Pulse:Tween(btn, {Size = dim2(1, 0, 0, 24), TextTransparency = 0}, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out))
+            else
+                Pulse:Tween(btn, {Size = dim2(1, 0, 0, 0), TextTransparency = 1}, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out))
+            end
+        end
+        
+        if Open and not isTweening then
+            local targetHeight = math.clamp(visibleCount * 24 + 38, 38, 180)
+            Pulse:Tween(Items.DropFrame, {Size = dim2(0, Items.Main.AbsoluteSize.X, 0, targetHeight)}, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out))
+            Items.Scroll.CanvasSize = dim2(0, 0, 0, visibleCount * 24)
+        end
+    end
+    Items.SearchInput:GetPropertyChangedSignal("Text"):Connect(FilterOptions)
 
     local function ToggleDropdown()
         if isTweening then return end
-        Open = not Open
         isTweening = true
 
-        if Open then
+        if not Open then
+            Items.SearchInput.Text = "" -- Reset before setting Open to true
+            Open = true
+            
             Items.DropFrame.Visible = true
             Cfg.UpdatePosition()
             Items.DropFrame.Size = dim2(0, Items.Main.AbsoluteSize.X, 0, 0)
-            local targetHeight = math.clamp(#Cfg.Options * 24 + 8, 0, 150)
+            
+            local visibleCount = #Cfg.Options
+            local targetHeight = math.clamp(visibleCount * 24 + 38, 38, 180)
+            
             Pulse:Tween(Items.Icon, {Rotation = 0}, TweenInfo.new(0.3))
+            
+            -- Tuff Search Animation (Fade & Slide in)
+            Items.SearchBg.BackgroundTransparency = 1
+            Items.SearchInput.TextTransparency = 1
+            Items.SearchInput.Position = dim2(0, 8, 0, -4)
+            Pulse:Tween(Items.SearchBg, {BackgroundTransparency = 0}, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out))
+            Pulse:Tween(Items.SearchInput, {TextTransparency = 0, Position = dim2(0, 8, 0, 0)}, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out))
+            
             local tw = Pulse:Tween(Items.DropFrame, {Size = dim2(0, Items.Main.AbsoluteSize.X, 0, targetHeight)}, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out))
             tw.Completed:Wait()
         else
+            Open = false
             Pulse:Tween(Items.Icon, {Rotation = 180}, TweenInfo.new(0.3))
+            
+            -- Reverse Search Animation
+            Pulse:Tween(Items.SearchBg, {BackgroundTransparency = 1}, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.In))
+            Pulse:Tween(Items.SearchInput, {TextTransparency = 1, Position = dim2(0, 8, 0, -4)}, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.In))
+            
             local tw = Pulse:Tween(Items.DropFrame, {Size = dim2(0, Items.Main.AbsoluteSize.X, 0, 0)}, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out))
             tw.Completed:Wait()
             Items.DropFrame.Visible = false
@@ -741,21 +832,22 @@ function Pulse:Dropdown(properties)
         end
     end)
 
-    local OptionBtns = {}
     function Cfg.RefreshOptions(newList)
         Cfg.Options = newList or Cfg.Options
-        for _, btn in ipairs(OptionBtns) do btn:Destroy() end
+        for _, data in ipairs(OptionBtns) do data.btn:Destroy() end
         table.clear(OptionBtns)
         for _, opt in ipairs(Cfg.Options) do
             local btn = Pulse:Create("TextButton", { 
                 Parent = Items.Scroll, Size = dim2(1, 0, 0, 24), BackgroundTransparency = 1, 
                 Text = "   " .. tostring(opt), TextColor3 = themes.preset.subtext, TextSize = 13, 
-                FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium), TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 202 
+                FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium), TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 202,
+                ClipsDescendants = true -- Required for "tuff" filtering animation
             })
             Pulse:Themify(btn, "subtext", "TextColor3")
             btn.MouseButton1Click:Connect(function() Cfg.set(opt); ToggleDropdown() end)
-            table.insert(OptionBtns, btn)
+            table.insert(OptionBtns, {btn = btn, text = tostring(opt)})
         end
+        FilterOptions()
     end
 
     function Cfg.set(val)
@@ -810,7 +902,6 @@ function Pulse:Colorpicker(properties)
 
     local h, s, v = Color3.toHSV(Cfg.Color)
     
-    -- Added ClipsDescendants to allow smooth tweening vertically
     Items.DropFrame = Pulse:Create("Frame", { Parent = Pulse.Gui, Size = dim2(0, 150, 0, 0), BackgroundColor3 = themes.preset.element, Visible = false, ZIndex = 200, ClipsDescendants = true })
     Pulse:Themify(Items.DropFrame, "element", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.DropFrame, CornerRadius = dim(0, 4) })
