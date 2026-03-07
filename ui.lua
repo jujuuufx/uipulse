@@ -89,6 +89,18 @@ function Pulse:Create(instance, options)
     return ins
 end
 
+-- Reusable subtle gradient for elements ("Allat")
+local function AddSubtleGradient(parent, rotation)
+    return Pulse:Create("UIGradient", {
+        Parent = parent,
+        Rotation = rotation or 90,
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, rgb(255, 255, 255)),
+            ColorSequenceKeypoint.new(1, rgb(180, 180, 180))
+        })
+    })
+end
+
 function Pulse:Themify(instance, theme, property)
     if not themes.utility[theme] then return end
     table.insert(themes.utility[theme][property], instance)
@@ -107,15 +119,15 @@ end
 function Pulse:Resizify(Parent)
     local UIS = game:GetService("UserInputService")
     local Resizing = Pulse:Create("TextButton", {
-        AnchorPoint = vec2(1, 1), Position = dim2(1, 0, 1, 0), Size = dim2(0, 24, 0, 24), -- slightly bigger area
+        AnchorPoint = vec2(1, 1), Position = dim2(1, 0, 1, 0), Size = dim2(0, 34, 0, 34), -- much bigger grab area
         BorderSizePixel = 0, BackgroundTransparency = 1, Text = "", Parent = Parent, ZIndex = 999,
     })
     
     local grip = Pulse:Create("ImageLabel", {
         Parent = Resizing,
         AnchorPoint = vec2(1, 1),
-        Position = dim2(1, -2, 1, -2),
-        Size = dim2(0, 14, 0, 14), -- bigger icon
+        Position = dim2(1, -4, 1, -4),
+        Size = dim2(0, 20, 0, 20), -- visibly bigger icon
         BackgroundTransparency = 1,
         Image = "rbxthumb://type=Asset&id=126894492960889&w=150&h=150",
         ImageColor3 = themes.preset.accent,
@@ -552,6 +564,7 @@ function Pulse:Toggle(properties)
     })
     Pulse:Themify(Items.CheckFill, "accent", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.CheckFill, CornerRadius = dim(0, 3) })
+    AddSubtleGradient(Items.CheckFill, 45) -- Toggle gradient slant
 
     Items.Title = Pulse:Create("TextLabel", { 
         Parent = Items.Button, Position = dim2(0, 30, 0.5, 0), AnchorPoint = vec2(0, 0.5), Size = dim2(1, -26, 1, 0), 
@@ -589,8 +602,8 @@ function Pulse:Button(properties)
     })
     Pulse:Themify(Items.Button, "element", "BackgroundColor3")
     Pulse:Themify(Items.Button, "subtext", "TextColor3")
-
     Pulse:Create("UICorner", { Parent = Items.Button, CornerRadius = dim(0, 4) })
+    AddSubtleGradient(Items.Button, 90) -- Button Gradient
 
     Items.Button.MouseButton1Click:Connect(function()
         Pulse:Tween(Items.Button, {BackgroundColor3 = themes.preset.outline, TextColor3 = themes.preset.text}, TweenInfo.new(0.1))
@@ -625,10 +638,12 @@ function Pulse:Slider(properties)
     Items.Track = Pulse:Create("TextButton", { Parent = Items.Container, Position = dim2(0, 4, 0, 24), Size = dim2(1, -8, 0, 6), BackgroundColor3 = themes.preset.element, Text = "", AutoButtonColor = false })
     Pulse:Themify(Items.Track, "element", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.Track, CornerRadius = dim(1, 0) })
+    AddSubtleGradient(Items.Track, 90) -- Slider Track Gradient
 
     Items.Fill = Pulse:Create("Frame", { Parent = Items.Track, Size = dim2(0, 0, 1, 0), BackgroundColor3 = themes.preset.accent })
     Pulse:Themify(Items.Fill, "accent", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.Fill, CornerRadius = dim(1, 0) })
+    AddSubtleGradient(Items.Fill, 90) -- Slider Fill Gradient
     
     Items.Knob = Pulse:Create("Frame", { Parent = Items.Fill, AnchorPoint = vec2(0.5, 0.5), Position = dim2(1, 0, 0.5, 0), Size = dim2(0, 12, 0, 12), BackgroundColor3 = themes.preset.accent })
     Pulse:Create("UICorner", { Parent = Items.Knob, CornerRadius = dim(1, 0) })
@@ -677,6 +692,7 @@ function Pulse:Textbox(properties)
     Items.Bg = Pulse:Create("Frame", { Parent = Items.Container, Size = dim2(1, 0, 1, 0), BackgroundColor3 = themes.preset.element })
     Pulse:Themify(Items.Bg, "element", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.Bg, CornerRadius = dim(0, 4) })
+    AddSubtleGradient(Items.Bg, 90) -- Textbox Gradient
 
     Items.Input = Pulse:Create("TextBox", { 
         Parent = Items.Bg, Position = dim2(0, 12, 0, 0), Size = dim2(1, -24, 1, 0), BackgroundTransparency = 1, 
@@ -721,6 +737,7 @@ function Pulse:Dropdown(properties)
     })
     Pulse:Themify(Items.Main, "element", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.Main, CornerRadius = dim(0, 4) })
+    AddSubtleGradient(Items.Main, 90) -- Dropdown Main Gradient
 
     Items.SelectedText = Pulse:Create("TextLabel", { Parent = Items.Main, Position = dim2(0, 12, 0, 0), Size = dim2(1, -24, 1, 0), BackgroundTransparency = 1, Text = "...", TextColor3 = themes.preset.subtext, TextSize = 13, FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium), TextXAlignment = Enum.TextXAlignment.Left })
     Pulse:Themify(Items.SelectedText, "subtext", "TextColor3")
@@ -738,6 +755,7 @@ function Pulse:Dropdown(properties)
     Items.SearchBg = Pulse:Create("Frame", { Parent = Items.DropFrame, Size = dim2(1, -12, 0, 24), Position = dim2(0, 6, 0, 6), BackgroundColor3 = themes.preset.background, BorderSizePixel = 0, BackgroundTransparency = 1, ZIndex = 201 })
     Pulse:Themify(Items.SearchBg, "background", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.SearchBg, CornerRadius = dim(0, 4) })
+    AddSubtleGradient(Items.SearchBg, 90) -- Search Input Gradient
 
     Items.SearchInput = Pulse:Create("TextBox", {
         Parent = Items.SearchBg, Size = dim2(1, -16, 1, 0), Position = dim2(0, 8, 0, -4), BackgroundTransparency = 1, 
@@ -1184,7 +1202,22 @@ function Pulse:Configs(window)
         end
     })
 
-    local SectionRight = Tab:Section({Name = "Theme Settings", Side = "Right"})
+    local SectionRight = Tab:Section({Name = "Settings & Themes", Side = "Right"})
+
+    -- Streamer Mode added
+    SectionRight:Toggle({
+        Name = "Streamer Mode",
+        Flag = "Pulse_StreamerMode",
+        Callback = function(state)
+            if state then
+                window.Items.Username.Text = "Hidden User"
+                window.Items.Avatar.Image = "rbxthumb://type=AvatarHeadShot&id=1&w=48&h=48" -- Roblox Official Builderman account ID
+            else
+                window.Items.Username.Text = lp.Name
+                window.Items.Avatar.Image = "rbxthumb://type=AvatarHeadShot&id="..lp.UserId.."&w=48&h=48"
+            end
+        end
+    })
 
     SectionRight:Label({Name = "Accent Color"}):Colorpicker({ Callback = function(color3) Pulse:RefreshTheme("accent", color3) end, Color = themes.preset.accent })
     SectionRight:Label({Name = "Glow Color"}):Colorpicker({ Callback = function(color3) Pulse:RefreshTheme("glow", color3) end, Color = themes.preset.glow })
