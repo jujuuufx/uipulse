@@ -119,7 +119,7 @@ end
 function Pulse:Resizify(Parent)
     local UIS = game:GetService("UserInputService")
     local Resizing = Pulse:Create("TextButton", {
-        AnchorPoint = vec2(1, 1), Position = dim2(1, 0, 1, 0), Size = dim2(0, 25, 0, 25),
+        AnchorPoint = vec2(1, 1), Position = dim2(1, 0, 1, 0), Size = dim2(0, 34, 0, 34), -- much bigger grab area
         BorderSizePixel = 0, BackgroundTransparency = 1, Text = "", Parent = Parent, ZIndex = 999,
     })
     
@@ -285,8 +285,9 @@ function Pulse:Window(properties)
     })
     Pulse:Themify(Items.Status, "subtext", "TextColor3")
 
+    -- Moved settings button position to -45 to not overlap the larger resizer icon
     Items.SettingsBtn = Pulse:Create("ImageButton", {
-        Parent = Items.Footer, AnchorPoint = vec2(1, 0.5), Position = dim2(1, -25, 0.5, 0),
+        Parent = Items.Footer, AnchorPoint = vec2(1, 0.5), Position = dim2(1, -45, 0.5, 0),
         Size = dim2(0, 16, 0, 16), BackgroundTransparency = 1, Image = "rbxassetid://11293977610", ImageColor3 = themes.preset.subtext, ZIndex = 5
     })
     Pulse:Themify(Items.SettingsBtn, "subtext", "ImageColor3")
