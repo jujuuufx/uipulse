@@ -119,7 +119,7 @@ end
 function Pulse:Resizify(Parent)
     local UIS = game:GetService("UserInputService")
     local Resizing = Pulse:Create("TextButton", {
-        AnchorPoint = vec2(1, 1), Position = dim2(1, 0, 1, 0), Size = dim2(0, 34, 0, 34), -- much bigger grab area
+        AnchorPoint = vec2(1, 1), Position = dim2(1, 0, 1, 0), Size = dim2(0, 25, 0, 25),
         BorderSizePixel = 0, BackgroundTransparency = 1, Text = "", Parent = Parent, ZIndex = 999,
     })
     
