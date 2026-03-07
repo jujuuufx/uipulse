@@ -89,14 +89,14 @@ function Pulse:Create(instance, options)
     return ins
 end
 
--- Reusable subtle gradient for elements ("Allat")
+-- Much stronger contrast so gradients are very visible on tiny sliders/toggles
 local function AddSubtleGradient(parent, rotation)
     return Pulse:Create("UIGradient", {
         Parent = parent,
         Rotation = rotation or 90,
         Color = ColorSequence.new({
             ColorSequenceKeypoint.new(0, rgb(255, 255, 255)),
-            ColorSequenceKeypoint.new(1, rgb(180, 180, 180))
+            ColorSequenceKeypoint.new(1, rgb(110, 110, 110)) -- Darker bottom for highly visible 3D shading
         })
     })
 end
@@ -119,7 +119,7 @@ end
 function Pulse:Resizify(Parent)
     local UIS = game:GetService("UserInputService")
     local Resizing = Pulse:Create("TextButton", {
-        AnchorPoint = vec2(1, 1), Position = dim2(1, 0, 1, 0), Size = dim2(0, 34, 0, 34), -- much bigger grab area
+        AnchorPoint = vec2(1, 1), Position = dim2(1, 0, 1, 0), Size = dim2(0, 34, 0, 34),
         BorderSizePixel = 0, BackgroundTransparency = 1, Text = "", Parent = Parent, ZIndex = 999,
     })
     
@@ -127,7 +127,7 @@ function Pulse:Resizify(Parent)
         Parent = Resizing,
         AnchorPoint = vec2(1, 1),
         Position = dim2(1, -4, 1, -4),
-        Size = dim2(0, 20, 0, 20), -- visibly bigger icon
+        Size = dim2(0, 20, 0, 20),
         BackgroundTransparency = 1,
         Image = "rbxthumb://type=Asset&id=126894492960889&w=150&h=150",
         ImageColor3 = themes.preset.accent,
@@ -285,7 +285,6 @@ function Pulse:Window(properties)
     })
     Pulse:Themify(Items.Status, "subtext", "TextColor3")
 
-    -- Moved settings button position to -45 to not overlap the larger resizer icon
     Items.SettingsBtn = Pulse:Create("ImageButton", {
         Parent = Items.Footer, AnchorPoint = vec2(1, 0.5), Position = dim2(1, -45, 0.5, 0),
         Size = dim2(0, 16, 0, 16), BackgroundTransparency = 1, Image = "rbxassetid://11293977610", ImageColor3 = themes.preset.subtext, ZIndex = 5
@@ -557,6 +556,7 @@ function Pulse:Toggle(properties)
     })
     Pulse:Themify(Items.Checkbox, "element", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.Checkbox, CornerRadius = dim(0, 3) })
+    AddSubtleGradient(Items.Checkbox, 90) -- ADDED: Gradient to the empty background box
 
     Items.CheckFill = Pulse:Create("Frame", {
         Parent = Items.Checkbox, Size = dim2(1, 0, 1, 0),
@@ -565,7 +565,7 @@ function Pulse:Toggle(properties)
     })
     Pulse:Themify(Items.CheckFill, "accent", "BackgroundColor3")
     Pulse:Create("UICorner", { Parent = Items.CheckFill, CornerRadius = dim(0, 3) })
-    AddSubtleGradient(Items.CheckFill, 45) -- Toggle gradient slant
+    AddSubtleGradient(Items.CheckFill, 90) -- Toggle gradient on the filled box
 
     Items.Title = Pulse:Create("TextLabel", { 
         Parent = Items.Button, Position = dim2(0, 30, 0.5, 0), AnchorPoint = vec2(0, 0.5), Size = dim2(1, -26, 1, 0), 
@@ -649,6 +649,7 @@ function Pulse:Slider(properties)
     Items.Knob = Pulse:Create("Frame", { Parent = Items.Fill, AnchorPoint = vec2(0.5, 0.5), Position = dim2(1, 0, 0.5, 0), Size = dim2(0, 12, 0, 12), BackgroundColor3 = themes.preset.accent })
     Pulse:Create("UICorner", { Parent = Items.Knob, CornerRadius = dim(1, 0) })
     Pulse:Themify(Items.Knob, "accent", "BackgroundColor3")
+    AddSubtleGradient(Items.Knob, 90) -- ADDED: Gradient on the circular knob itself
 
     local Value = Cfg.Default
     function Cfg.set(val)
@@ -934,6 +935,7 @@ function Pulse:Colorpicker(properties)
 
     local btn = Pulse:Create("TextButton", { Parent = self.Items.Title or self.Items.Button or self.Items.Container, AnchorPoint = vec2(1, 0.5), Position = dim2(1, -6, 0.5, 0), Size = dim2(0, 30, 0, 14), BackgroundColor3 = Cfg.Color, Text = "" })
     Pulse:Create("UICorner", {Parent = btn, CornerRadius = dim(0, 4)})
+    AddSubtleGradient(btn, 90) -- ADDED: Gradient on the color preview box
 
     local h, s, v = Color3.toHSV(Cfg.Color)
     
@@ -1046,7 +1048,8 @@ function Pulse:Keybind(properties)
     Pulse:Themify(KeyBtn, "subtext", "TextColor3")
 
     Pulse:Create("UICorner", {Parent = KeyBtn, CornerRadius = dim(0, 4)})
-    
+    AddSubtleGradient(KeyBtn, 90) -- ADDED: Gradient on the keybind button
+
     local binding = false
     KeyBtn.MouseButton1Click:Connect(function() binding = true; KeyBtn.Text = "..." end)
     
