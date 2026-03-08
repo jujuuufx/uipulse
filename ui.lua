@@ -129,7 +129,7 @@ function Pulse:Resizify(Parent)
         Position = dim2(1, -4, 1, -4),
         Size = dim2(0, 20, 0, 20),
         BackgroundTransparency = 1,
-        Image = "rbxthumb://type=Asset&id=126894492960889&w=150&h=150",
+        Image = "rbxthumb://type=Asset&id=6153965696&w=150&h=150",
         ImageColor3 = themes.preset.accent,
         ImageTransparency = 0.5
     })
