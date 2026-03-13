@@ -466,8 +466,7 @@ function Pulse:Section(properties)
     local Cfg = { 
         Name = properties.Name or properties.name or "Section", 
         Side = properties.Side or properties.side or "Left", 
-        Icon = properties.Icon or properties.icon or "rbxassetid://11293977610", 
-        RightIcon = properties.RightIcon or properties.righticon or "rbxassetid://11293977610",
+        RightIcon = properties.RightIcon or properties.righticon or "rbxassetid://12338898398",
         Items = {} 
     }
     Cfg.Side = (Cfg.Side:lower() == "right") and "Right" or "Left"
@@ -508,14 +507,9 @@ function Pulse:Section(properties)
 
     Items.Header = Pulse:Create("Frame", { Parent = Items.Section, Size = dim2(1, 0, 0, 36), BackgroundTransparency = 1 })
     
-    Items.Icon = Pulse:Create("ImageLabel", {
-        Parent = Items.Header, Position = dim2(0, 16, 0.5, 0), AnchorPoint = vec2(0, 0.5), Size = dim2(0, 14, 0, 14),
-        BackgroundTransparency = 1, Image = Cfg.Icon, ImageColor3 = themes.preset.subtext
-    })
-    Pulse:Themify(Items.Icon, "subtext", "ImageColor3")
-
+    -- Section Title (Shifted left since there's no icon anymore)
     Items.Title = Pulse:Create("TextLabel", { 
-        Parent = Items.Header, Position = dim2(0, 38, 0.5, 0), AnchorPoint = vec2(0, 0.5), Size = dim2(1, -70, 0, 14), 
+        Parent = Items.Header, Position = dim2(0, 14, 0.5, 0), AnchorPoint = vec2(0, 0.5), Size = dim2(1, -46, 0, 14), 
         BackgroundTransparency = 1, Text = Cfg.Name, TextColor3 = themes.preset.text, FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold), TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left 
     })
     Pulse:Themify(Items.Title, "text", "TextColor3")
@@ -523,7 +517,7 @@ function Pulse:Section(properties)
     Items.Chevron = Pulse:Create("ImageLabel", {
         Parent = Items.Header, Position = dim2(1, -14, 0.5, 0), AnchorPoint = vec2(1, 0.5), Size = dim2(0, 12, 0, 12),
         BackgroundTransparency = 1, Image = Cfg.RightIcon, ImageColor3 = themes.preset.subtext, 
-        Rotation = (Cfg.RightIcon == "rbxassetid://11293977610") and 180 or 0
+        Rotation = 0
     })
     Pulse:Themify(Items.Chevron, "subtext", "ImageColor3")
 
@@ -744,7 +738,7 @@ function Pulse:Dropdown(properties)
     Items.SelectedText = Pulse:Create("TextLabel", { Parent = Items.Main, Position = dim2(0, 12, 0, 0), Size = dim2(1, -24, 1, 0), BackgroundTransparency = 1, Text = "...", TextColor3 = themes.preset.subtext, TextSize = 13, FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium), TextXAlignment = Enum.TextXAlignment.Left })
     Pulse:Themify(Items.SelectedText, "subtext", "TextColor3")
     
-    Items.Icon = Pulse:Create("ImageLabel", { Parent = Items.Main, Position = dim2(1, -20, 0.5, 0), AnchorPoint = vec2(0, 0.5), Size = dim2(0, 10, 0, 10), BackgroundTransparency = 1, Image = "rbxassetid://11293977610", ImageColor3 = themes.preset.subtext, Rotation = 180 })
+    Items.Icon = Pulse:Create("ImageLabel", { Parent = Items.Main, Position = dim2(1, -20, 0.5, 0), AnchorPoint = vec2(0, 0.5), Size = dim2(0, 10, 0, 10), BackgroundTransparency = 1, Image = "rbxassetid://12338898398", ImageColor3 = themes.preset.subtext, Rotation = 0 })
 
     Items.DropFrame = Pulse:Create("Frame", { 
         Parent = Pulse.Gui, Size = dim2(1, 0, 0, 0), Position = dim2(0, 0, 0, 0), 
@@ -826,7 +820,7 @@ function Pulse:Dropdown(properties)
             local visibleCount = #Cfg.Options
             local targetHeight = math.clamp(visibleCount * 24 + 38, 38, 180)
             
-            Pulse:Tween(Items.Icon, {Rotation = 0}, TweenInfo.new(0.3))
+            Pulse:Tween(Items.Icon, {Rotation = 180}, TweenInfo.new(0.3))
             
             -- Tuff Search Animation (Fade & Slide in)
             Items.SearchBg.BackgroundTransparency = 1
@@ -839,7 +833,7 @@ function Pulse:Dropdown(properties)
             tw.Completed:Wait()
         else
             Open = false
-            Pulse:Tween(Items.Icon, {Rotation = 180}, TweenInfo.new(0.3))
+            Pulse:Tween(Items.Icon, {Rotation = 0}, TweenInfo.new(0.3))
             
             -- Reverse Search Animation
             Pulse:Tween(Items.SearchBg, {BackgroundTransparency = 1}, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.In))
